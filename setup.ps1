@@ -50,7 +50,7 @@ Push-Location $Name
 try {
     # ── Install Vite dependencies ──────────────────────────────────────────────
     Write-Host "  Installing Vite dependencies..." -ForegroundColor Cyan
-    npm install | Out-Null
+    npm install
 
     # ── Download the setup script ──────────────────────────────────────────────
     Write-Host "  Downloading $ScriptFile..." -ForegroundColor Cyan
