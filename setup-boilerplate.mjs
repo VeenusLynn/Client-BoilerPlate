@@ -10,65 +10,66 @@
  *   3. node path/to/setup-boilerplate.mjs
  */
 
-import { execSync } from 'child_process'
-import { mkdirSync, writeFileSync, existsSync, rmSync } from 'fs'
-import { join, resolve } from 'path'
+import { execSync } from "child_process";
+import { mkdirSync, writeFileSync, existsSync, rmSync } from "fs";
+import { join, resolve } from "path";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const run  = (cmd) => execSync(cmd, { stdio: 'inherit', cwd: projectDir })
-const write = (filePath, content) => writeFileSync(filePath, content, 'utf8')
-const mkdir = (...parts) => mkdirSync(join(...parts), { recursive: true })
+const run = (cmd) => execSync(cmd, { stdio: "inherit", cwd: projectDir });
+const write = (filePath, content) => writeFileSync(filePath, content, "utf8");
+const mkdir = (...parts) => mkdirSync(join(...parts), { recursive: true });
 
-const projectDir = resolve(process.cwd())
-const projectName = projectDir.split(/[\\/]/).pop()
+const projectDir = resolve(process.cwd());
+const projectName = projectDir.split(/[\\/]/).pop();
 
 // Guard: make sure we're inside a Vite project
-if (!existsSync(join(projectDir, 'vite.config.js')) && !existsSync(join(projectDir, 'vite.config.ts'))) {
-  console.error('\n❌  No vite.config.js found.')
-  console.error('    Run this script from inside your Vite project folder.\n')
-  process.exit(1)
+if (
+  !existsSync(join(projectDir, "vite.config.js")) &&
+  !existsSync(join(projectDir, "vite.config.ts"))
+) {
+  console.error("\n❌  No vite.config.js found.");
+  console.error("    Run this script from inside your Vite project folder.\n");
+  process.exit(1);
 }
 
-console.log(`\n⚡  Setting up boilerplate in: ${projectName}`)
-console.log('='.repeat(52))
+console.log(`\n⚡  Setting up boilerplate in: ${projectName}`);
+console.log("=".repeat(52));
 
 // ── 1. Install dependencies ───────────────────────────────────────────────────
 
-console.log('\n📦  Installing dependencies...')
-run('npm install react-router-dom axios zustand react-hot-toast clsx')
-run('npm install -D tailwindcss @tailwindcss/vite')
+console.log("\n📦  Installing dependencies...");
+run("npm install react-router-dom axios zustand react-hot-toast clsx");
+run("npm install -D tailwindcss @tailwindcss/vite");
 
 // ── 2. Clean up Vite defaults we don't need ───────────────────────────────────
 
-console.log('\n🧹  Cleaning up Vite defaults...')
-const toDelete = [
-  'src/App.css',
-  'src/assets/react.svg',
-  'public/vite.svg',
-]
+console.log("\n🧹  Cleaning up Vite defaults...");
+const toDelete = ["src/App.css", "src/assets/react.svg", "public/vite.svg"];
 toDelete.forEach((f) => {
-  const full = join(projectDir, f)
-  if (existsSync(full)) rmSync(full)
-})
+  const full = join(projectDir, f);
+  if (existsSync(full)) rmSync(full);
+});
 
 // ── 3. Create folder structure ────────────────────────────────────────────────
 
-console.log('\n📁  Creating folder structure...')
-mkdir(projectDir, 'src/assets')
-mkdir(projectDir, 'src/components/ui')
-mkdir(projectDir, 'src/components/layout')
-mkdir(projectDir, 'src/hooks')
-mkdir(projectDir, 'src/state')
-mkdir(projectDir, 'src/services')
-mkdir(projectDir, 'src/scenes')
-mkdir(projectDir, 'src/utils')
+console.log("\n📁  Creating folder structure...");
+mkdir(projectDir, "src/assets");
+mkdir(projectDir, "src/components/ui");
+mkdir(projectDir, "src/components/layout");
+mkdir(projectDir, "src/hooks");
+mkdir(projectDir, "src/state");
+mkdir(projectDir, "src/services");
+mkdir(projectDir, "src/scenes");
+mkdir(projectDir, "src/utils");
 
 // ── 4. Config files ───────────────────────────────────────────────────────────
 
-console.log('\n✍️   Writing config files...')
+console.log("\n✍️   Writing config files...");
 
-write(join(projectDir, 'tailwind.config.js'), `/** @type {import('tailwindcss').Config} */
+write(
+  join(projectDir, "tailwind.config.js"),
+  `/** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
@@ -93,9 +94,12 @@ export default {
   },
   plugins: [],
 }
-`)
+`,
+);
 
-write(join(projectDir, 'vite.config.js'), `import { defineConfig } from 'vite'
+write(
+  join(projectDir, "vite.config.js"),
+  `import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
@@ -117,11 +121,14 @@ export default defineConfig({
     },
   },
 })
-`)
+`,
+);
 
 // ── 5. CSS + theme ────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/index.css'), `@import "tailwindcss";
+write(
+  join(projectDir, "src/index.css"),
+  `@import "tailwindcss";
 
 /* ─────────────────────────────────────────────
    CSS Custom Properties — edit in theme.js too
@@ -155,14 +162,12 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/theme.js'), `/**
- * theme.js — Design tokens
- * Keep in sync with CSS variables in index.css.
- * Use these in JS logic (e.g. chart colors, dynamic styles).
- */
-const theme = {
+write(
+  join(projectDir, "src/theme.js"),
+  `const theme = {
   colors: {
     primary: {
       50:  '#eff6ff',
@@ -183,15 +188,14 @@ const theme = {
 }
 
 export default theme
-`)
+`,
+);
 
 // ── 6. Services ───────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/services/api.js'), `/**
- * services/api.js
- * Central axios instance. All API calls go through here.
- */
-import axios from 'axios'
+write(
+  join(projectDir, "src/services/api.js"),
+  `import axios from 'axios'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -223,18 +227,14 @@ api.interceptors.response.use(
 )
 
 export default api
-`)
+`,
+);
 
 // ── 7. Hooks ──────────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/hooks/useApi.js'), `/**
- * hooks/useApi.js
- * Generic data-fetching hook with loading/error state.
- *
- * Usage:
- *   const { data, loading, error, execute } = useApi(api.get, '/users')
- */
-import { useState, useEffect, useCallback } from 'react'
+write(
+  join(projectDir, "src/hooks/useApi.js"),
+  `import { useState, useEffect, useCallback } from 'react'
 
 export function useApi(apiFn, ...args) {
   const [data,    setData]    = useState(null)
@@ -259,16 +259,12 @@ export function useApi(apiFn, ...args) {
 
   return { data, loading, error, execute }
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/hooks/useLocalStorage.js'), `/**
- * hooks/useLocalStorage.js
- * useState but persisted to localStorage.
- *
- * Usage:
- *   const [theme, setTheme] = useLocalStorage('theme', 'light')
- */
-import { useState } from 'react'
+write(
+  join(projectDir, "src/hooks/useLocalStorage.js"),
+  `import { useState } from 'react'
 
 export function useLocalStorage(key, initialValue) {
   const [storedValue, setStoredValue] = useState(() => {
@@ -292,23 +288,26 @@ export function useLocalStorage(key, initialValue) {
 
   return [storedValue, setValue]
 }
-`)
+`,
+);
 
 // ── 8. State ──────────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/state/useAuthStore.js'), `/**
- * state/useAuthStore.js
- * Global auth state via Zustand.
- *
- * Usage:
- *   const { user, login, logout } = useAuthStore()
- */
-import { create } from 'zustand'
+write(
+  join(projectDir, "src/state/useAuthStore.js"),
+  `import { create } from 'zustand'
 import api from '@/services/api'
 
 const useAuthStore = create((set) => ({
   user:  JSON.parse(localStorage.getItem('user')) || null,
   token: localStorage.getItem('token') || null,
+
+  register: async (data) => {
+    const { user, token } = await api.post('/auth/register', data)
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(user))
+    set({ user, token })
+  },
 
   login: async (credentials) => {
     const { user, token } = await api.post('/auth/login', credentials)
@@ -327,14 +326,14 @@ const useAuthStore = create((set) => ({
 }))
 
 export default useAuthStore
-`)
+`,
+);
 
 // ── 9. Components ─────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/components/ui/Button.jsx'), `/**
- * components/ui/Button.jsx
- */
-import clsx from 'clsx'
+write(
+  join(projectDir, "src/components/ui/Button.jsx"),
+  `import clsx from 'clsx'
 
 const variants = {
   primary:   'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
@@ -378,12 +377,12 @@ export default function Button({
     </button>
   )
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/components/layout/Navbar.jsx'), `/**
- * components/layout/Navbar.jsx
- */
-import { Link, useNavigate } from 'react-router-dom'
+write(
+  join(projectDir, "src/components/layout/Navbar.jsx"),
+  `import { Link, useNavigate } from 'react-router-dom'
 import useAuthStore from '@/state/useAuthStore'
 
 export default function Navbar() {
@@ -407,28 +406,34 @@ export default function Navbar() {
           </button>
         </div>
       ) : (
-        <Link to="/login" className="text-sm text-blue-600 hover:underline">Login</Link>
+        <div className="flex items-center gap-4">
+          <Link to="/register" className="text-sm text-blue-600 hover:underline">Register</Link>
+          <Link to="/login"    className="text-sm text-gray-600 hover:underline">Login</Link>
+        </div>
       )}
     </nav>
   )
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/components/layout/PageWrapper.jsx'), `/**
- * components/layout/PageWrapper.jsx
- */
-export default function PageWrapper({ children, className = '' }) {
+write(
+  join(projectDir, "src/components/layout/PageWrapper.jsx"),
+  `export default function PageWrapper({ children, className = '' }) {
   return (
     <main className={\`max-w-7xl mx-auto px-4 sm:px-6 py-8 \${className}\`}>
       {children}
     </main>
   )
 }
-`)
+`,
+);
 
 // ── 10. Scenes ────────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/scenes/Home.jsx'), `import PageWrapper from '@/components/layout/PageWrapper'
+write(
+  join(projectDir, "src/scenes/Home.jsx"),
+  `import PageWrapper from '@/components/layout/PageWrapper'
 
 export default function Home() {
   return (
@@ -438,10 +443,13 @@ export default function Home() {
     </PageWrapper>
   )
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/scenes/Login.jsx'), `import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+write(
+  join(projectDir, "src/scenes/Login.jsx"),
+  `import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import useAuthStore from '@/state/useAuthStore'
 import Button from '@/components/ui/Button'
 
@@ -498,13 +506,102 @@ export default function Login() {
             Sign in
           </Button>
         </div>
+        <p className=\"mt-4 text-sm text-center text-gray-500\">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline">Create one</Link>
+        </p>
       </div>
     </div>
   )
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/scenes/NotFound.jsx'), `import { Link } from 'react-router-dom'
+write(
+  join(projectDir, "src/scenes/Register.jsx"),
+  `import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import useAuthStore from '@/state/useAuthStore'
+import Button from '@/components/ui/Button'
+
+export default function Register() {
+  const [name,     setName]     = useState('')
+  const [email,    setEmail]    = useState('')
+  const [password, setPassword] = useState('')
+  const [error,    setError]    = useState(null)
+  const [loading,  setLoading]  = useState(false)
+  const { register } = useAuthStore()
+  const navigate     = useNavigate()
+
+  const handleSubmit = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      await register({ name, email, password })
+      navigate('/')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">Create account</h1>
+        {error && (
+          <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>
+        )}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Your name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="you@example.com"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="••••••••"
+            />
+          </div>
+          <Button onClick={handleSubmit} loading={loading} className="w-full">
+            Create account
+          </Button>
+        </div>
+        <p className="mt-4 text-sm text-center text-gray-500">
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-600 hover:underline">Sign in</Link>
+        </p>
+      </div>
+    </div>
+  )
+}
+`,
+);
+
+write(
+  join(projectDir, "src/scenes/NotFound.jsx"),
+  `import { Link } from 'react-router-dom'
 
 export default function NotFound() {
   return (
@@ -515,11 +612,14 @@ export default function NotFound() {
     </div>
   )
 }
-`)
+`,
+);
 
 // ── 11. Utils ─────────────────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/utils/index.js'), `/** Format ISO date → "Jan 1, 2024" */
+write(
+  join(projectDir, "src/utils/index.js"),
+  `/** Format ISO date → "Jan 1, 2024" */
 export const formatDate = (iso) =>
   new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 
@@ -533,21 +633,25 @@ export const capitalize = (str) =>
 
 /** Sleep helper */
 export const sleep = (ms) => new Promise((res) => setTimeout(res, ms))
-`)
+`,
+);
 
 // ── 12. App.jsx + main.jsx ────────────────────────────────────────────────────
 
-write(join(projectDir, 'src/App.jsx'), `import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+write(
+  join(projectDir, "src/App.jsx"),
+  `import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
-import Navbar   from '@/components/layout/Navbar'
-import Home     from '@/scenes/Home'
-import Login    from '@/scenes/Login'
-import NotFound from '@/scenes/NotFound'
+import Navbar    from '@/components/layout/Navbar'
+import Home      from '@/scenes/Home'
+import Login     from '@/scenes/Login'
+import Register  from '@/scenes/Register'
+import NotFound  from '@/scenes/NotFound'
 import useAuthStore from '@/state/useAuthStore'
 
 function PrivateRoute({ children }) {
   const { token } = useAuthStore()
-  return token ? children : <Navigate to="/login" replace />
+  return token ? children : <Navigate to="/register" replace />
 }
 
 export default function App() {
@@ -556,16 +660,20 @@ export default function App() {
       <Toaster position="top-right" />
       <Navbar />
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login"    element={<Login />} />
+        <Route path="/"         element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="*"         element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )
 }
-`)
+`,
+);
 
-write(join(projectDir, 'src/main.jsx'), `import { StrictMode } from 'react'
+write(
+  join(projectDir, "src/main.jsx"),
+  `import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
@@ -575,14 +683,21 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>
 )
-`)
+`,
+);
 
 // ── 13. .env files ────────────────────────────────────────────────────────────
 
-if (!existsSync(join(projectDir, '.env.local'))) {
-  write(join(projectDir, '.env.local'),   'VITE_API_URL=http://localhost:5000/api\n')
+if (!existsSync(join(projectDir, ".env.local"))) {
+  write(
+    join(projectDir, ".env.local"),
+    "VITE_API_URL=http://localhost:5000/api\n",
+  );
 }
-write(join(projectDir, '.env.example'), 'VITE_API_URL=http://localhost:5000/api\n')
+write(
+  join(projectDir, ".env.example"),
+  "VITE_API_URL=http://localhost:5000/api\n",
+);
 
 // ── Done ──────────────────────────────────────────────────────────────────────
 
@@ -590,5 +705,11 @@ console.log(`
 ✅  Boilerplate applied to: ${projectName}
 
 Next steps:
-  npm run dev   →  http://localhost:3000
-`)
+  npm run dev   →  http://localhost:5173
+
+Port layout:
+  Client → http://localhost:5173  (this project, Vite default)
+  API    → http://localhost:5000  (Express default)
+  VITE_API_URL is pre-set to http://localhost:5000/api in .env.local
+  Vite proxy forwards /api/* to localhost:5000 — no CORS issues in dev
+`);

@@ -64,7 +64,16 @@ try {
     Remove-Item $ScriptFile -Force
 
     Write-Host ""
-    Write-Host "  Done! cd into '$Name' and run 'npm run dev'" -ForegroundColor Green
+    Write-Host "  ✅  Done! Your client is ready." -ForegroundColor Green
+    Write-Host ""
+    Write-Host "  Next steps:" -ForegroundColor Yellow
+    Write-Host "    cd $Name  &&  npm run dev" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "  Port layout:" -ForegroundColor Cyan
+    Write-Host "    Client → http://localhost:5173  (this project, Vite default)" -ForegroundColor Cyan
+    Write-Host "    API    → http://localhost:5000  (Express default)" -ForegroundColor Cyan
+    Write-Host "    VITE_API_URL is pre-set to http://localhost:5000/api in .env.local" -ForegroundColor Cyan
+    Write-Host "    Vite proxy forwards /api/* to localhost:5000 — no CORS issues in dev" -ForegroundColor Cyan
     Write-Host ""
 }
 catch {
