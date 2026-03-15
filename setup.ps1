@@ -43,7 +43,7 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
 Write-Host ""
 Write-Host "  Creating Vite + React project: $Name" -ForegroundColor Cyan
 
-npx -y create-vite@latest $Name -- --template react
+npx -y create-vite@7 $Name -- --template react
 
 Push-Location $Name
 
